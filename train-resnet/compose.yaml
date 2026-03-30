@@ -1,0 +1,46 @@
+services:
+  trainer:
+    image: resnet18-mnist:latest
+    working_dir: /workspace
+    command: python train.py
+    shm_size: "2g"
+    volumes:
+      - type: bind
+        source: ${HOME}/train-resnet/code
+        target: /workspace
+      - type: bind
+        source: ${HOME}/train-resnet/data
+        target: /data
+      - type: volume
+        source: resnet-models
+        target: /models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  inference:
+    image: resnet18-mnist-infer:latest
+    working_dir: /workspace
+    command: python inference.py
+    shm_size: "2g"
+    ports:
+      - "8000:8000"
+    volumes:
+      - type: volume
+        source: resnet-models
+        target: /models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  resnet-models:
+    external: true

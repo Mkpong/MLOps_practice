@@ -1,0 +1,40 @@
+stages:
+  download:
+    cmd: python dataset-download.py
+    deps:
+      - dataset-download.py
+      - params.yaml
+    outs:
+      - data/raw
+
+  preprocess:
+    cmd: python preprocess.py
+    deps:
+      - preprocess.py
+      - data/raw
+      - params.yaml
+    outs:
+      - data/processed
+      - artifacts/classes.json
+
+  train:
+    cmd: python train.py
+    deps:
+      - train.py
+      - model_utils.py
+      - data/raw
+      - params.yaml
+    outs:
+      - artifacts/model.pt
+      - artifacts/metrics.json
+
+  evaluate:
+    cmd: python evaluate.py
+    deps:
+      - evaluate.py
+      - model_utils.py
+      - data/raw
+      - artifacts/model.pt
+      - params.yaml
+    outs:
+      - artifacts/metrics.json
