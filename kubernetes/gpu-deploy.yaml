@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cuda-app
+  labels:
+    app: cuda-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cuda-app
+  template:
+    metadata:
+      labels:
+        app: cuda-app
+    spec:
+      containers:
+        - name: cuda
+          image: nvidia/cuda:12.2.0-base-ubuntu22.04
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "===== Pod started: $(hostname) =====";
+              nvidia-smi -L;
+              echo "Sleeping...";
+              sleep 3600
+          resources:
+            limits:
+              nvidia.com/gpu: 1

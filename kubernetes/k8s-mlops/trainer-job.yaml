@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata: { name: resnet-trainer, namespace: mlops }
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: trainer
+          image: mkpong/resnet18-mnist:latest      # Docker 실습에서 만든 이미지 Push 후 사용
+          command: ["python", "train.py"]
+          resources: { limits: { nvidia.com/gpu: 1 } }
+          volumeMounts:
+            - { mountPath: /models, name: models }
+            - { mountPath: /dev/shm, name: dshm }
+      volumes:
+        - { name: models, persistentVolumeClaim: { claimName: resnet-models } }
+        - { name: dshm, emptyDir: { medium: Memory, sizeLimit: 2Gi } }
+
