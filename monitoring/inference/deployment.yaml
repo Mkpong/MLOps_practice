@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: resnet-inference, namespace: mlops }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: inference } }
+  template:
+    metadata: { labels: { app: inference } }
+    spec:
+      containers:
+        - name: api
+          image: mkpong/resnet18-infer:v1
+          ports: [{ containerPort: 8000, name: http }]
+          resources: { limits: { nvidia.com/gpu: 1 }, requests: { cpu: 200m, memory: 512Mi } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: inference-svc, namespace: mlops }
+spec:
+  type: NodePort
+  selector: { app: inference }
+  ports:
+    - { port: 8000, targetPort: 8000, nodePort: 30080 }

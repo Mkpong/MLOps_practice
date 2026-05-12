@@ -1,0 +1,15 @@
+# 웹 프레임워크
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+
+# 메트릭 자동 계측 (핵심)
+prometheus-fastapi-instrumentator==7.0.0
+
+# 이미지/모델 처리
+Pillow==10.2.0
+torchvision==0.16.2
+
+# torch 는 베이스 이미지가 제공
+# (pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime)
+
